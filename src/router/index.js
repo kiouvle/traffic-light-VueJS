@@ -5,6 +5,7 @@ import TrafficLight from '../views/TrafficLight.vue'
 Vue.use(VueRouter)
 
 const routes = [
+  { path: '/', redirect: '/red' },
   {
     path: '/red',
     name: 'Red',
