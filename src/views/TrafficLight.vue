@@ -1,76 +1,110 @@
 <template>
   <div class="home">
-    <Light :timeLeft="this.timeLeft" :isActive="currentLightColor == 'red'" lightColor = 'red' />
-    <Light :timeLeft="this.timeLeft" :isActive="currentLightColor == 'yellow'" lightColor = 'yellow'/>
-    <Light :timeLeft="this.timeLeft" :isActive="currentLightColor == 'green'" lightColor = 'green'/>
+    <Light
+      :timeLeft="this.timeLeft"
+      :isActive="currentLightColor == 'red'"
+      lightColor="red"
+    />
+    <Light
+      :timeLeft="this.timeLeft"
+      :isActive="currentLightColor == 'yellow'"
+      lightColor="yellow"
+    />
+    <Light
+      :timeLeft="this.timeLeft"
+      :isActive="currentLightColor == 'green'"
+      lightColor="green"
+    />
   </div>
 </template>
 
 <script>
 // @ is an alias to /src
-import Light from '@/components/Light.vue'
-import router from '@/router'
+import Light from "@/components/Light.vue";
+import router from "@/router";
 
 const TRAFFIC_CONFIG = {
   red: {
-    nextColor: 'yellow',
-    timeOut: 10000
+    nextColor: "yellow",
+    timeOut: 10000,
   },
   yellow: {
-    nextColor: 'green',
-    timeOut: 3000
+    nextColor: "green",
+    timeOut: 3000,
   },
   green: {
-    nextColor: 'red',
-    timeOut: 15000
-  }
-}
+    nextColor: "red",
+    timeOut: 15000,
+  },
+};
 
 const TIMER_INTERVAL = 1000;
+const LS_KEY = "trafficLightState";
 
 export default {
-  name: 'TrafficLight',
+  name: "TrafficLight",
   components: {
     Light,
   },
-    props: {
-    currentLightColor: String
+  props: {
+    currentLightColor: String,
   },
-    data: function() {
+  data: function () {
     return {
       timeLeft: 0,
-      currentConfig: null, 
-      trafficTimer: null
-    }
+      currentConfig: null,
+      trafficTimer: null,
+    };
   },
   mounted() {
-    this.setCurrentConfig()
-    this.startTrafficking()
+    this.setCurrentConfig(true);
+    this.startTrafficking();
   },
   unmounted() {
-    clearInterval(this.trafficTimer)
+    clearInterval(this.trafficTimer);
   },
   watch: {
     currentLightColor() {
-      this.setCurrentConfig()
-    }
+      this.setCurrentConfig();
+    },
   },
   methods: {
     startTrafficking() {
-      this.trafficTimer = setInterval(() => {this.handleTimerTick()}, TIMER_INTERVAL)
+      this.trafficTimer = setInterval(() => {
+        this.handleTimerTick();
+      }, TIMER_INTERVAL);
     },
-    setCurrentConfig() {
-      this.currentConfig = TRAFFIC_CONFIG[this.currentLightColor]
-      this.timeLeft = this.currentConfig.timeOut
-    }, 
-    handleTimerTick() {
-      this.timeLeft = this.timeLeft - TIMER_INTERVAL
-      if (this.timeLeft <= 0) {
-        router.push(this.currentConfig.nextColor)
+    setCurrentConfig(overrideFromLS) {
+      this.currentConfig = TRAFFIC_CONFIG[this.currentLightColor];
+      if (overrideFromLS) {
+        const stateFromLS = JSON.parse(localStorage.getItem(LS_KEY));
+        if (
+          stateFromLS &&
+          stateFromLS.currentLightColor == this.currentLightColor
+        ) {
+          this.timeLeft = stateFromLS.timeLeft;
+        } else {
+          this.timeLeft = this.currentConfig.timeOut;
+        }
+      } else {
+        this.timeLeft = this.currentConfig.timeOut;
       }
-    }
-  }
-}
+    },
+    handleTimerTick() {
+      this.timeLeft = this.timeLeft - TIMER_INTERVAL;
+      if (this.timeLeft <= 0) {
+        router.push(this.currentConfig.nextColor);
+      }
+      localStorage.setItem(
+        LS_KEY,
+        JSON.stringify({
+          currentLightColor: this.currentLightColor,
+          timeLeft: this.timeLeft,
+        })
+      );
+    },
+  },
+};
 </script>
 
 <style scoped>
@@ -85,5 +119,4 @@ export default {
   width: max-content;
   border-radius: 10%;
 }
-
 </style>
