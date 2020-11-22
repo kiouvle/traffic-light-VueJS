@@ -22,24 +22,7 @@
 // @ is an alias to /src
 import Light from "@/components/Light.vue";
 import router from "@/router";
-
-const TRAFFIC_CONFIG = {
-  red: {
-    nextColor: "yellow",
-    timeOut: 10000,
-  },
-  yellow: {
-    nextColor: "green",
-    timeOut: 3000,
-  },
-  green: {
-    nextColor: "red",
-    timeOut: 15000,
-  },
-};
-
-const TIMER_INTERVAL = 1000;
-const LS_KEY = "trafficLightState";
+import { TIMER_INTERVAL, TRAFFIC_CONFIG, LS_KEY } from "@/config/traffic-light";
 
 export default {
   name: "TrafficLight",
