@@ -1,26 +1,38 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import Home from '../views/Home.vue'
+import TrafficLight from '../views/TrafficLight.vue'
 
 Vue.use(VueRouter)
 
 const routes = [
   {
-    path: '/',
-    name: 'Home',
-    component: Home
+    path: '/red',
+    name: 'Red',
+    component: TrafficLight,
+    props: {
+      currentLightColor: 'red'
+    }
   },
   {
-    path: '/about',
-    name: 'About',
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "about" */ '../views/About.vue')
-  }
+    path: '/yellow',
+    name: 'Yellow',
+    component: TrafficLight,
+    props: {
+      currentLightColor: 'yellow'
+    }
+  },
+  {
+    path: '/green',
+    name: 'Green',
+    component: TrafficLight,
+    props: {
+      currentLightColor: 'green'
+    }
+  },
 ]
 
 const router = new VueRouter({
+  mode: 'history',
   routes
 })
 
